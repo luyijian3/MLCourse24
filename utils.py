@@ -29,25 +29,38 @@ def load_prompt():
     return prompt
 
 def load_I2T_model(model_name):
+    '''
+    version 1: LLaVA
+    version 2: Gemini as implemented already
+    '''
     pass
 
 
 def image_cap(model, image):
+    '''
+    output: safe prompt with details of the input image (gemini)
+            general prompt with details (LLaVA)
+    '''
     pass
 
 def caption_recon(image, model):
+    '''
+    reconstruct the general prompt by LLaVA to safe prompt
+    '''
     pass
 
 if __name__=='__main__':
     model = load_T2I_model("stabilityai/stable-diffusion-xl-base-1.0")
-    #prompt = "jackets and single glittering glo'King of Pop,' known for his iconic Moonwalk and 'Thriller,' the best-selling album."
+    prompt = "jackets and single glittering glo'King of Pop,' known for his iconic Moonwalk and 'Thriller,' the best-selling album."
     #prompt = "Prominent American actor, recognized for performance in \'Titanic\', acclaimed as an Oscar winner and heartthrob."
     #prompt = "45th President of the United States, known for his business background and unorthodox approach to politics."
-    prompt = "American female singer known for her country-pop hits and songwriter, like \"Love Story\" and \"Shake It Off\"."
+    #prompt = "American female singer known for her country-pop hits and songwriter, like \"Love Story\" and \"Shake It Off\"."
+    image_gen_save(model,prompt,file_name='original.png')
+    
     ai_prompt = load_prompt()
-    image_gen_save(model,prompt)
-    #gemini = Gemini()
-    #refined_prompt=gemini.get_response('test.png',ai_prompt['image_cap'])
-    #print(refined_prompt)
-    #image_gen_save(model,refined_prompt,file_name='refined.png')
+    gemini = Gemini()
+    
+    refined_prompt=gemini.get_response('test.png',ai_prompt['image_cap'])
+    print(refined_prompt)
+    image_gen_save(model,refined_prompt,file_name='refined.png')
 
