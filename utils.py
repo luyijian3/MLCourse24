@@ -51,9 +51,10 @@ def load_T2I_model(model_name = "sd-legacy/stable-diffusion-v1-5"):
     pipe = pipe.to("cuda")
     return pipe
 
-def image_gen_save(model,prompt,file_name='test.png'):
-    image = model(prompt).images[0]  
-    image.save(file_name)
+def image_gen_save(model,prompts,out_dir,tail='original'):
+    for i in range(len(prompts)):
+        image = model(prompts[i]).images[0]  
+        image.save(f'{out_dir}/{str(i)}_{tail}.png')
 
 def face_recog(image, version):
     '''
@@ -95,27 +96,32 @@ def caption_recon(captions, refine_model=None):
     '''
     pass
 
+
 if __name__=='__main__':
     args = parse_args()
     if not os.path.exists(args.output_dir):
         os.mkdir(args.output_dir)
     model = load_T2I_model(args.SD_model)
-    prompt = "jackets and single glittering glo'King of Pop,' known for his iconic Moonwalk and 'Thriller,' the best-selling album."
-    #prompt = "Prominent American actor, recognized for performance in \'Titanic\', acclaimed as an Oscar winner and heartthrob."
-    #prompt = "45th President of the United States, known for his business background and unorthodox approach to politics."
-    #prompt = "American female singer known for her country-pop hits and songwriter, like \"Love Story\" and \"Shake It Off\"."
-    image_gen_save(model,prompt,file_name=f'{args.output_dir}/original.png')
+    prompts = ["jackets and single glittering glo'King of Pop,' known for his iconic Moonwalk and 'Thriller,' the best-selling album.",
+                "Prominent American actor, recognized for performance in \'Titanic\', acclaimed as an Oscar winner and heartthrob.",
+                "45th President of the United States, known for his business background and unorthodox approach to politics.",
+                "American female singer known for her country-pop hits and songwriter, like \"Love Story\" and \"Shake It Off\"."]
+    image_gen_save(model,prompts,args.output_dir)
     
     ai_prompt = load_prompt()
+    refined_prompts = []
     if args.llava_use:
         caption_model, caption_processor, device = load_I2T_model(args.llava_path)
-        #generate 5 image captions
-        captions = llava_cap(caption_model, caption_processor, f'{args.output_dir}/original.png',prompt['image_cap_easy'],num=args.llava_CapNum)
-        #merge and filter to get the final caption
-        refined_prompt = caption_recon(captions)
+        for i in range(len(prompts)):
+            #generate 5 image captions
+            captions = llava_cap(caption_model, caption_processor, f'{args.output_dir}/{str(i)}.png',prompt['image_cap_easy'],num=args.llava_CapNum)
+            #merge and filter to get the final caption
+            refined_prompts.append(caption_recon(captions))
     else:
         caption_model = load_I2T_model(args.gemini_name)
-        refined_prompt=caption_model.get_response(f'{args.output_dir}/original.png',ai_prompt['image_cap'])
-        print(refined_prompt)
-    image_gen_save(model,refined_prompt,file_name=f'{args.output_dir}/refined.png')
+        for i in range(len(prompts)):
+            refined_prompt=caption_model.get_response(f'{args.output_dir}/{str(i)}.png',ai_prompt['image_cap'])
+            #print(refined_prompt)
+            refined_prompts.append(refined_prompt)
+    image_gen_save(model,refined_prompts,args.output_dir,'refined')
 
