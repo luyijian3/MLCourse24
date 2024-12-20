@@ -21,6 +21,7 @@ transform = transforms.Compose([
     transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
 ])
 
+
 class HierarchicalCelebrityDataset(Dataset):
     def __init__(self, dataset_path, transform=None):
 
@@ -62,7 +63,6 @@ class HierarchicalCelebrityDataset(Dataset):
 
     def get_label_encoder(self):
         return self.label_encoder
-
 
 
 class EfficientNetClassifier(nn.Module):
