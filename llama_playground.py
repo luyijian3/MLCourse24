@@ -19,10 +19,10 @@ def load_llama(model_id = "/data3/MODELS//Meta-Llama-3-8B-Instruct"):
     )
     return pipeline
 
-def llama_response(pipeline, image_caption):
+def response_llama(pipeline, prompt, image_captions):
     messages = [
-        {"role": "system", "content": "You are an expert in image labeling."},
-        {"role": "user", "content": prompt_category + image_caption},
+        {"role": "system", "content": prompt},
+        {"role": "user", "content": image_captions},
     ]
 
     terminators = [
