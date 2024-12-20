@@ -114,7 +114,7 @@ if __name__=='__main__':
         caption_model, caption_processor, device = load_I2T_model(args.llava_path)
         for i in range(len(prompts)):
             #generate 5 image captions
-            captions = llava_cap(caption_model, caption_processor, f'{args.output_dir}/{str(i)}.png',prompt['image_cap_easy'],num=args.llava_CapNum)
+            captions = llava_cap(caption_model, caption_processor, f'{args.output_dir}/{str(i)}.png',ai_prompt['image_cap_easy'],num=args.llava_CapNum)
             #merge and filter to get the final caption
             refined_prompts.append(caption_recon(captions))
     else:
