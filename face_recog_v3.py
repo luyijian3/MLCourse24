@@ -13,7 +13,6 @@ import google.generativeai as genai
 
 os.environ["gemini_API_KEY"] = "AIzaSyCgyxlDsqFlffNhj1ZL5P-d44E88mC6E2I"
  
-
 class CelebrityDataset(Dataset):
     def __init__(self, image_paths, labels, categories, transform=None):
         self.image_paths = image_paths
@@ -33,7 +32,6 @@ class CelebrityDataset(Dataset):
             image = self.transform(image)
 
         return image, label, category
-
 
 
 def load_dataset(dataset_path):
