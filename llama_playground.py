@@ -1,8 +1,10 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="4,5,6"
+
 import transformers
 import torch
 
-import os
-os.environ["CUDA_VISIBLE_DEVICES"]="1,2,3"
+
 
 # huggingface-cli download MMInstruction/Qwen-VL-ArXivCap --cache-dir /data2/MODELS
 

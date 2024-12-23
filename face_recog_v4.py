@@ -242,6 +242,8 @@ def face_recog(image_path, model=None, label_encoder=None, device='cuda', confid
     
     elif version == 'local':
         face_image = extract_face(image_path)
+        if not face_image:
+            return "The generated image does not contain any face", 0
         model.eval()
         transform = transforms.Compose([
             transforms.Resize((160, 160)),
@@ -317,6 +319,14 @@ def stratified_split_by_person(image_paths, labels, categories, train_ratio=0.8)
     
     return train_dataset, val_dataset
 
+def load_face_recog_model(model_path="best_model.pth"):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    label_encoder = load_label_encoder()
+    num_classes = len(label_encoder.classes_)
+    model = EfficientNetClassifier(num_classes=num_classes).to(device)
+    model.load_state_dict(torch.load("best_model.pth"))
+    return model, label_encoder
+
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -352,6 +362,6 @@ if __name__ == "__main__":
     # train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=100)
 
     model.load_state_dict(torch.load("best_model.pth"))
-    image_path = 'test_image/test15.jpeg'
+    image_path = '/data2/luyj/MLCourse24/outputs/2_original.png'
     celebrity_name, confidence = face_recog(image_path, model, label_encoder, device=device)
     print("Detected Celebrity:", celebrity_name, "with confidence:", confidence)
