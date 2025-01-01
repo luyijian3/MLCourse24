@@ -7,6 +7,7 @@ from PIL import Image
 from torchvision import transforms
 #from face_recog_v4 import load_face_recog_model, face_recog
 from utils import face_recog
+from face_recog_v4 import load_face_recog_model, face_recog_v4
 import numpy as np
 import pickle
 import time
@@ -41,7 +42,7 @@ class Gemini:
             response = self.model.generate_content([prompt])
             time.sleep(5)
             response = response.text.strip().split("\n")
-            return [i for i in response if i.replace(' ','')!=''][:5]
+            return [i for i in response if i.replace(' ','')!=''][:3]
         except Exception as e:
             print(f"Error generating prompts for {name}: {e}")
             return []
@@ -50,7 +51,7 @@ class Gemini:
 # Main workflow
 if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+    v4_model, label_encoder = load_face_recog_model()
     # Load pre-trained model and label encoder
     #model, label_encoder = load_face_recog_model()
     #model.eval()
@@ -70,13 +71,13 @@ if __name__ == "__main__":
     os.makedirs(output_folder, exist_ok=True)
 
     # File to save successful results
-    results_file = "successful_results.jsonl"
+    results_file = "filtered_results_0.jsonl"
 
     # Initialize Gemini for generating new prompts
     gemini = Gemini()
     chance = 5
     # Iterate through all celebrities in the JSONL file
-    for entry in generated_prompts:
+    for entry in generated_prompts[14:]:
         chance = 5
         name = entry["name"]
         category = entry["category"]
@@ -98,9 +99,10 @@ if __name__ == "__main__":
                         continue
 
                     confidence = face_recog(image_path, category, name.replace(' ','_'))
+                    _, confidence_v4 = face_recog_v4(image_path, v4_model, label_encoder)
                     #print(detected_name,'|',name)
                     #if detected_name == name and confidence >= 0.6:
-                    if confidence:
+                    if confidence and confidence_v4>=0:
                         successful_images.append(image_path)
                     else:
                         os.remove(image_path)
@@ -109,7 +111,7 @@ if __name__ == "__main__":
                     print(f"Prompt validated for {name}: {prompt}")
                     successful_prompts.append({"prompt": prompt, "images": successful_images})
 
-                if len(successful_prompts) >= 5:
+                if len(successful_prompts) >= 1:
                     break
             if chance <= 0:
                 break

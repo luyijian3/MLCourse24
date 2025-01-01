@@ -231,7 +231,7 @@ def gemini_api_call(image_path):
         print(f"API call error: {e}")
         return {"celebrity_detected": False, "name": None}
 
-def face_recog(image_path, model=None, label_encoder=None, device='cuda', confidence_threshold=0, version='local',):
+def face_recog_v4(image_path, model=None, label_encoder=None, device='cuda', confidence_threshold=0, version='local',):
     if version == 'gemini':
         # Use external API for detection
         response = gemini_api_call(image_path)
@@ -363,5 +363,5 @@ if __name__ == "__main__":
 
     model.load_state_dict(torch.load("best_model.pth"))
     image_path = '/data2/luyj/MLCourse24/outputs/2_original.png'
-    celebrity_name, confidence = face_recog(image_path, model, label_encoder, device=device)
+    celebrity_name, confidence = face_recog_v4(image_path, model, label_encoder, device=device)
     print("Detected Celebrity:", celebrity_name, "with confidence:", confidence)
