@@ -10,8 +10,6 @@ from tqdm import tqdm
 from torch.optim.lr_scheduler import ReduceLROnPlateau, OneCycleLR  
 import json
 import google.generativeai as genai
-
-os.environ["gemini_API_KEY"] = "AIzaSyCgyxlDsqFlffNhj1ZL5P-d44E88mC6E2I"
  
 class CelebrityDataset(Dataset):
     def __init__(self, image_paths, labels, categories, transform=None):

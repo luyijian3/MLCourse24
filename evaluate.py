@@ -24,10 +24,6 @@ def gemini_pro_eval(implicit_prompt, image, gemini):
 v4_model, label_encoder = load_face_recog_model()
 dir='./final_outputs'
 log_file = read_jsonl_file(f'{dir}/log.jsonl')
-recent_names = read_jsonl_file('./modern_results.jsonl')
-recent_names = list(set([i['name'] for i in recent_names]))
-ancient_names = read_jsonl_file('./ancient_results.jsonl')
-ancient_names = list(set([i['name'] for i in ancient_names]))
 original_result, refined_result=[],[]
 failed_prompts,good_prompts=[],[]
 rate1,rate2=[],[]

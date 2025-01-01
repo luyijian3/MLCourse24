@@ -14,8 +14,6 @@ import face_recognition
 import numpy as np
 import pickle
 
-os.environ["gemini_API_KEY"] = "AIzaSyCgyxlDsqFlffNhj1ZL5P-d44E88mC6E2I"
-
 # Add face extraction function
 def extract_face(image_path, required_size=(160, 160)):
     try:
