@@ -22,7 +22,7 @@ def gemini_pro_eval(implicit_prompt, image, gemini):
     return ratings.split()
 
 v4_model, label_encoder = load_face_recog_model()
-dir='./final_outputs'
+dir='./outputs'
 log_file = read_jsonl_file(f'{dir}/log.jsonl')
 original_result, refined_result=[],[]
 failed_prompts,good_prompts=[],[]
